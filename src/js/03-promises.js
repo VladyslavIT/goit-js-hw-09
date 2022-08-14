@@ -26,17 +26,12 @@ function createPromise(position, delay) {
 const onSubmitForm = (event) => {
   event.preventDefault();
 
-  const saveValue = localStorage.getItem('formInfo');
-  const parseValue = JSON.parse(saveValue);
+  let timeDelay = +(formData.delay);
+  let step = +(formData.step);
+  let amount = +(formData.amount);
 
-  let timeDelay = parseValue.delay;
-  let step = parseValue.step;
-
-
-  for (let i = 0; i <= parseValue.amount, (i += 1); ) {
-    const promise = createPromise(i, step + timeDelay);
-
-    promise
+  for (let i = 0; i <= amount; i+= 1) {
+     createPromise(i, timeDelay + step)
       .then(({ position, delay }) => {
       Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
       })
