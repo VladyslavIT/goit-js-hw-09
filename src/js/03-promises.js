@@ -30,14 +30,15 @@ const onSubmitForm = (event) => {
   let step = +(formData.step);
   let amount = +(formData.amount);
 
-  for (let i = 0; i <= amount; i+= 1) {
-     createPromise(i, timeDelay + step)
+  for (let i = 1; i <= amount; i+= 1) {
+     createPromise(i, timeDelay)
       .then(({ position, delay }) => {
       Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
       })
       .catch(({ position, delay }) => {
         Notiflix.Notify.warning(`❌ Rejected promise ${position} in ${delay}ms`);
       });
+    timeDelay += step;
   }
   localStorage.removeItem('formInfo');
 };
