@@ -51,7 +51,6 @@ const onSubmitForm = (event) => {
       .catch(({ position, delay }) => {
         Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       });
-    // timeDelay += step;
     timeDelay += step;
   }
   localStorage.removeItem('formInfo');
