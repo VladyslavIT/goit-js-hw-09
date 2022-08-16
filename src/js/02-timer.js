@@ -1,6 +1,8 @@
 import flatpickr from "flatpickr"
 import "flatpickr/dist/flatpickr.min.css";
 
+import Notiflix from 'notiflix';
+
 const inputEl = document.querySelector('#datetime-picker');
 const buttonStart = document.querySelector('button[data-start]');
 const daysEl = document.querySelector('span.value[data-days]');
@@ -8,7 +10,8 @@ const hoursEl = document.querySelector('span.value[data-hours]');
 const minutesEl = document.querySelector('span.value[data-minutes]');
 const secondsEl = document.querySelector('span.value[data-seconds]');
 
-buttonStart.setAttribute('disabled', true);
+buttonStart.disabled = true;
+
 
 const options = {
   enableTime: true,
@@ -16,21 +19,21 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-      let differenceTime = selectedDates[0].getTime() - new Date().getTime();
+      const differenceTime = selectedDates[0].getTime() - new Date().getTime();
       if (differenceTime < 0) {
-          alert('Please choose a date in the future');
+          Notiflix.Notify.failure('Please choose a date in the future');
       }
-      buttonStart.removeAttribute('disabled');
+      buttonStart.disabled = false;
   },
 };
 
 let chooseDay = flatpickr(inputEl, options);
 
 const onStartTimer = () => {
-    buttonStart.setAttribute('disabled', true);
+    buttonStart.disabled = true;
 
    const intervalId =  setInterval(() => {
-       let differenceTime = chooseDay.selectedDates[0].getTime() - new Date().getTime();
+       const differenceTime = chooseDay.selectedDates[0].getTime() - new Date().getTime();
        const { days, hours, minutes, seconds } = convertMs(differenceTime);
        if (differenceTime <= 0) {
            clearInterval(intervalId);
@@ -42,7 +45,6 @@ const onStartTimer = () => {
     },1000)
    
 }
-
 buttonStart.addEventListener('click', onStartTimer);
 
 const pad = (value) => {
