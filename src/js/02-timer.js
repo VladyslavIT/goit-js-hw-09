@@ -1,5 +1,5 @@
-import flatpickr from "flatpickr"
-import "flatpickr/dist/flatpickr.min.css";
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 import Notiflix from 'notiflix';
 
@@ -10,45 +10,46 @@ const hoursEl = document.querySelector('span.value[data-hours]');
 const minutesEl = document.querySelector('span.value[data-minutes]');
 const secondsEl = document.querySelector('span.value[data-seconds]');
 
-buttonStart.disabled = true;
-
-
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-      const differenceTime = selectedDates[0].getTime() - new Date().getTime();
-      if (differenceTime < 0) {
-          Notiflix.Notify.failure('Please choose a date in the future');
-      }
-      buttonStart.disabled = false;
+    const differenceTime = selectedDates[0].getTime() - new Date().getTime();
+    if (differenceTime < 1000) {
+      Notiflix.Notify.failure('Please choose a date in the future');
+    }
+    buttonStart.disabled = false;
   },
 };
 
 let chooseDay = flatpickr(inputEl, options);
 
-const onStartTimer = () => {
-    buttonStart.disabled = true;
+let intervalId = null;
 
-   const intervalId =  setInterval(() => {
-       const differenceTime = chooseDay.selectedDates[0].getTime() - new Date().getTime();
-       const { days, hours, minutes, seconds } = convertMs(differenceTime);
-       if (differenceTime <= 0) {
-           clearInterval(intervalId);
-       }
-       daysEl.textContent = days;
-       hoursEl.textContent = hours;
-       minutesEl.textContent = minutes;
-       secondsEl.textContent = seconds;
-    },1000)
-   
-}
+const onStartTimer = () => {
+  let intervalId = setInterval(() => {
+    const differenceTime =
+      chooseDay.selectedDates[0].getTime() - new Date().getTime();
+    const { days, hours, minutes, seconds } = convertMs(differenceTime);
+    if (differenceTime < seconds) {
+      Notiflix.Notify.failure('Please choose a date in the future');
+      convertMs(0);
+      clearInterval(intervalId);
+      return;
+    }
+    daysEl.textContent = days;
+    hoursEl.textContent = hours;
+    minutesEl.textContent = minutes;
+    secondsEl.textContent = seconds;
+  }, 1000);
+};
+
 buttonStart.addEventListener('click', onStartTimer);
 
-const pad = (value) => {
-    return String(value).padStart(2, `0`);
+const pad = value => {
+  return String(value).padStart(2, `0`);
 };
 
 function convertMs(ms) {
@@ -67,5 +68,4 @@ function convertMs(ms) {
   const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
-};
-
+}
